@@ -1,6 +1,10 @@
 import datetime
+import importlib
 from zoneinfo import ZoneInfo
 from discord.ext import commands, tasks
+import question_data.question_selection as question_selection
+
+importlib.reload(question_selection)    # Reloading the cog also reloads the question_selection module
 
 timezone = ZoneInfo("America/Chicago")
 
@@ -21,7 +25,8 @@ class Questions(commands.Cog):
     
     @tasks.loop(time=datetime.time(hour=question_time, tzinfo=timezone))
     async def daily_question(self):
-        await self.post_thread("test question content")
+        question_choice = question_selection.choose_question()
+        await self.post_thread(question_choice)
 
     async def post_thread(self, content):
         channel = self.bot.get_channel(question_channel)
@@ -29,13 +34,19 @@ class Questions(commands.Cog):
             date = datetime.datetime.now(timezone).strftime("%m/%d/%Y")
             message = await channel.send(f"## Question of the Day: {date}")
             thread = await message.create_thread(name=f"{content}", auto_archive_duration = archive_duration)
-            await thread.send(f"<@&{question_role}>: {content}")
+            # await thread.send(f"<@&{question_role}>: {content}")
+            await thread.send(f"{content}") # no ping for less annoying testing
+
 
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def test_question(self, ctx):
-        await self.post_thread("test thread")
+        await self.daily_question()
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def clear_history(self, ctx):
+        question_selection.clear_history()
 
 async def setup(bot):
     await bot.add_cog(Questions(bot))
