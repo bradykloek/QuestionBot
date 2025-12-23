@@ -58,7 +58,7 @@ def choose_question():
 
 def add_to_history(new_entry):
     with open(history_path, "r") as history_fp:
-        lines = history_fp.read().split("\n")   # splitting to also get rid of the \n for now
+        lines = history_fp.read().splitlines()
         while len(lines) >= max_entries:
             lines.pop(0)    # remove the top line, which is the oldest entry
         lines.append(new_entry)    # final entry did not previously have a new line, must add it now
