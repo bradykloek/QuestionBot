@@ -1,7 +1,15 @@
 import random 
+import os
 
 history_path = "question_data/history.txt"
 questions_path = "question_data/questions.tsv"
+
+os.makedirs(os.path.dirname(history_path), exist_ok=True)
+
+# If history.txt doesn't exist yet, write an empty file
+if not os.path.exists(history_path):
+    with open(history_path, "w") as f:
+        pass
 
 max_entries = 9     
 # Determines the number of questions that are stored in history and barred from being repeated.
