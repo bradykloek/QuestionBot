@@ -34,8 +34,7 @@ class Questions(commands.Cog):
             date = datetime.datetime.now(timezone).strftime("%m/%d/%Y")
             message = await channel.send(f"## Question of the Day: {date}")
             thread = await message.create_thread(name=f"{content}", auto_archive_duration = archive_duration)
-            # await thread.send(f"<@&{question_role}>: {content}")
-            await thread.send(f"{content}") # no ping for less annoying testing
+            await thread.send(f"<@&{question_role}>: {content}")
 
 
     @commands.command()
